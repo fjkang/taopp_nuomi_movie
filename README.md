@@ -2,9 +2,9 @@
 ### 爬虫实战，淘票票与百度糯米价格对比
 #### 1.crawler.py
 ###### 主程序入口,有3个方法
-###### 1）get_sessions()：
+###### 1）get_sessions()
 ###### 获取场次信息
-###### 2）min_price_sessions() ：
+###### 2）min_price_sessions()
 ###### 获取最低价场次
 ###### 3）hot_movies()
 ###### 获取热映电影
