@@ -54,6 +54,9 @@ class NuoMi():
         db = self.mongo_init
         col_city = db.nuomi_cityid
         # 以上是数据的连接的代码
+        if not col_city.find_one({'name': self.cityname}):
+            self.get_city() 
+            # 假如第一次运行，获取一次数据，写入数据库
         city = col_city.find_one({'name': self.cityname})
         return city['id']
 
@@ -80,6 +83,9 @@ class NuoMi():
         db = self.mongo_init
         col_movies = db.nuomi_movies
         # 以上是连接电影数据库的代码
+        if not col_movies.find_one({'movieName': self.moviename})['movieId']:
+            self.update_movies_info()
+            # 假如第一次运行，获取一次数据，写入数据库
         movieid = col_movies.find_one({'movieName': self.moviename})['movieId']
         return movieid
 
