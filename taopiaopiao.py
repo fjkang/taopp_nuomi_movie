@@ -27,29 +27,30 @@ class TaoPiaoPiao():
         self.current = 0
         self.total = 0
 
-    def get_city(self):
-        # 获取城市名和对应的城市代码
-        db = self.mongo_init
-        col_taopp = db.taopp_cityid
-        browser = self.browser_init()
-        wait = WebDriverWait(browser, 10)
-        url = 'https://dianying.taobao.com/'
-        browser.get(url)
-        city_bnt = wait.until(
-            EC.element_to_be_clickable((By.ID, 'cityName'))
-        )
-        city_bnt.click()
-        time.sleep(1)
-        doc = pq(browser.page_source)
-        city_list = doc('.M-cityList.scrollStyle').find('a')
-        for i in range(len(city_list)):
-            cityname = city_list.eq(i).text()
-            cityid = city_list.eq(i).attr('data-id')
-            try:
-                col_taopp.update_one({'id': cityid}, {'$set': {'id': cityid, 'name': cityname}}, upsert=True)
-            except Exception as e:
-                print(e)
-        browser.close()
+#     def get_city(self):
+#         # 获取城市名和对应的城市代码
+#         db = self.mongo_init
+#         col_taopp = db.taopp_cityid
+#         browser = self.browser_init()
+#         wait = WebDriverWait(browser, 10)
+#         url = 'https://dianying.taobao.com/'
+#         browser.get(url)
+#         city_bnt = wait.until(
+#             EC.element_to_be_clickable((By.ID, 'cityName'))
+#         )
+#         city_bnt.click()
+#         time.sleep(1)
+#         doc = pq(browser.page_source)
+#         city_list = doc('.M-cityList.scrollStyle').find('a')
+#         for i in range(len(city_list)):
+#             cityname = city_list.eq(i).text()
+#             cityid = city_list.eq(i).attr('data-id')
+#             try:
+#                 col_taopp.update_one({'id': cityid}, {'$set': {'id': cityid, 'name': cityname}}, upsert=True)
+#             except Exception as e:
+#                 print(e)
+#         browser.close()
+# 淘票票不需要用到cityid这个参数！！！
 
     def get_cinema_ids(self):
         # 获取指定城市的电影院ID
@@ -107,6 +108,9 @@ class TaoPiaoPiao():
         # 通过电影名称获取电影的ID
         db = self.mongo_init
         col_movies = db.taopp_movies
+        if not col_movies.find_one({'name': self.moviename}):
+            self.update_movies_info()
+            # 假如第一次运行或无电影信息，更新一次数据，写入数据库
         movie = col_movies.find_one({'name': self.moviename})
         return movie['id']
 
